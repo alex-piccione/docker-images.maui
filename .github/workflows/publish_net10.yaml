@@ -28,7 +28,7 @@ jobs:
           docker build --platform windows/amd64 `
             -t ${{ env.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} `
             -t ${{ env.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:latest `
-            -f ${{ env.DOCKERFILE }}
+            -f ${{ env.DOCKERFILE }} `
             .
 
       - name: Push Docker image
