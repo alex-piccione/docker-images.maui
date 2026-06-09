@@ -1,0 +1,10 @@
+# Use the official .NET 10 SDK image as a base
+#FROM mcr.microsoft.com/dotnet/sdk:10.0.100-windowsservercore-ltsc2022
+ARG DOTNET_VERSION=10.0.300
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-windowsservercore-ltsc2022
+
+# Install MAUI workload
+RUN dotnet workload install maui --skip-manifest-update
+
+# (Optional) Set the working directory
+WORKDIR /src
