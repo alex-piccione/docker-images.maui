@@ -1,0 +1,57 @@
+name: Build and push MAUI Docker image
+
+on:
+  workflow_dispatch:        # manual trigger only
+    #inputs:
+    #  dotnet_version:
+    #    description: '.NET SDK version (e.g. 10.0.300)'
+    #    required: true
+    #    default: '10.0.300'
+    #  image_version:
+    #    description: 'Image tag (e.g. 1.0)'
+    #    required: true
+    #    default: '1.0'
+
+env:
+  DOCKERHUB_USERNAME: alessandropiccione
+  IMAGE_NAME: maui-dotnet10-windows
+  DOCKERFILE: Dockerfile_net10
+  VERSION: 0.1
+
+jobs:
+  build-image:
+    runs-on: windows-2022   # pinned, matches ltsc2022 base image
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+
+      - name: Build Docker image
+        run: |
+          docker build --platform windows/amd64 `
+            -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} `
+            -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest `
+            -f ${{ env.DOCKERFILE }} `
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+      #- name: Build and push
+      #  uses: docker/build-push-action@v5
+      #  with:
+      #    context: .
+      #    file: ./Dockerfile
+      #    push: true
+      #    build-args: |
+      #      DOTNET_VERSION=${{ github.event.inputs.dotnet_version }}
+      #    tags: |
+      #      ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_version }}
