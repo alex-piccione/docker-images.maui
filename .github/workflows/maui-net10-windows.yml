@@ -19,7 +19,7 @@ env:
   VERSION: 0.1
 
 jobs:
-  build-image:
+  build-and-push:
     runs-on: windows-2022   # pinned, matches ltsc2022 base image
 
     steps:
@@ -42,20 +42,3 @@ jobs:
         run: |
           docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
           docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-
-      #- name: Log in to Docker Hub
-      #  uses: docker/login-action@v3
-      #  with:
-      #    username: ${{ env.DOCKERHUB_USERNAME }}
-      #    password: ${{ secrets.DOCKERHUB_PAT }}
-
-      #- name: Build and push
-      #  uses: docker/build-push-action@v5
-      #  with:
-      #    context: .
-      #    file: ./Dockerfile
-      #    push: true
-      #    build-args: |
-      #      DOTNET_VERSION=${{ github.event.inputs.dotnet_version }}
-      #    tags: |
-      #      ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_version }}
